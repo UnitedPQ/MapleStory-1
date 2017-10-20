@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>小朋友下樓梯</title>
+    <style>
+            * { padding: 0; margin: 0; }
+            canvas { background: #eee; display: block; margin: 0 auto; }
+    </style>
+</head>
+<body>
+
+    <canvas id="myCanvas" width="600" height="400"></canvas>
+    
+    <script>
+    
+    var canvas = document.getElementById("myCanvas");
+    var ctx = canvas.getContext("2d");
+    
+  
+    var ballRadius = 20 ;
+    //var x_f = Array(5);
+    //var y_f = Array(5);
+    var floors = [];
+    for(var i = 0; i< 5 ; i++){
+        floors[i]={x :0, y:0 , status : 0}
+    }
+    for(var i = 0;i < 5;i++){
+        floors[i].x= Math.floor( Math.random()*canvas.width + 1);
+        floors[i].y= Math.floor( Math.random()*canvas.height + 1);
+    }
+    //var x_f = Math.floor( Math.random()*canvas.width + 1); //f = floor 
+    //var y_f = Math.floor( Math.random()*canvas.height + 1);
+    var x = floors[0].x + ballRadius;
+    var y = floors[0].y- ballRadius;
+    var dx_m = 5 ; //ball's movemoent  
+    var dy = -2;
+    var dy_b = 2;
+    var floorWidth = 100;
+    var floorHeight = 10;
+    var rightPressed = false;
+    var leftPressed = false; 
+    var downPressed = false;
+    var score = 0;
+
+
+
+    function drawBall() {
+        ctx.beginPath();
+        ctx.arc(x,y,ballRadius,0,Math.PI*2);
+        ctx.fillStyle = "red";
+        ctx.fill();
+        ctx.closePath();
+    }
+    function drawFloor(i){
+            ctx.beginPath();
+            ctx.rect(floors[i].x , floors[i].y , floorWidth,floorHeight);
+            ctx.fillStyle = "#0095DD";
+            ctx.fill();
+            ctx.closePath();
+        
+    }
+    function ballTouchFloor(){//先不考慮
+        
+        for(var i=0; i<5 ; i++){
+            if(floors[i].y-y >0 && floors[i].y-y <= ballRadius && x >floors[i].x && x < floors[i].x + floorWidth){
+            y+=dy ;
+            floors[i].status = 1;}
+            //else{y-=dy;} 
+            else{
+                floors[i].status = 0;
+            }
+        }       
+            
+    }
+    function sum(){
+        var sum = 0;
+        for(var i = 0; i<5; i++){
+            sum += floors[i].status;
+        }
+        return sum;
+    }
+    function getScore(){
+        if(floors[0].y == 0){
+            score +=10;
+            console.log("score:" + score);
+        }
+        //return score;
+    }
+    function drawScore() {
+        ctx.font = "16px Arial";
+        ctx.fillStyle = "black";
+        ctx.fillText("Score: "+score, 8, 20);
+}
+    function init(){
+        floors[0].x = 200;
+        floors[0].y = 150;
+        x = floors[0].x + ballRadius;
+        y = floors[0].y- ballRadius;
+        drawBall();
+        for( var i = 0; i< 5; i++){
+            drawFloor(i);}
+    }
+    
+    function draw(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        drawScore();
+        ballTouchFloor();
+        for(var i = 0 ; i < 5; i++){
+            if (floors[i].y > 0){
+                floors[i].y += dy ;
+                drawFloor(i);
+        }
+        else{
+            ctx.clearRect(floors[i].x,floors[i].y,floors[i].x+floorWidth,floors[i].y+floorHeight);
+            floors[i].x = Math.floor( Math.random()*canvas.width + 1);
+            floors[i].y = canvas.height;
+            drawFloor(i);
+
+            
+            //y_f[i] = Math.floor( Math.random()*canvas.height + 1);
+           
+            
+        }}
+        if(!sum()){
+            y+= dy_b;
+        }
+       
+        if(leftPressed == true && x>0 + ballRadius){
+           x -= dx_m; 
+        }else if(rightPressed == true && x<canvas.width - ballRadius){
+           x += dx_m;
+        }
+        if(downPressed == true ){
+            if( sum()==0){
+                   
+                   y += dy_b;
+               }
+                     
+       } 
+       if ( y + ballRadius >= canvas.height | y -ballRadius <= 0){
+           alert("game over");
+           document.location.reload();
+       }else{
+           drawBall();
+       }
+       getScore();
+
+        requestAnimationFrame(draw);
+    }
+    document.addEventListener("keydown",keyDownHandler,false);
+    document.addEventListener("keyup",keyUpHandler,false);
+    function keyDownHandler(e){
+        if(e.keyCode ==39){
+            rightPressed = true;
+        }
+        else if(e.keyCode ==37){
+            leftPressed = true;
+        }
+        else if(e.keyCode == 40 ){
+            downPressed = true;
+        }
+    }
+    function keyUpHandler(e){
+        if(e.keyCode ==39){
+            rightPressed = false;
+        }
+        else if(e.keyCode ==37){
+            leftPressed = false;
+        }
+        else if(e.keyCode == 40 ){
+            downPressed = false;
+        }
+    }
+    
+    init();
+    draw();
+
+
+
+    
+    
+    
+    
+    
+    
+    
+    </script>
+    
+
+
+</body>
+</html>
