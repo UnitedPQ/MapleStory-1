@@ -36,12 +36,12 @@
     var ctx = canvas.getContext("2d");
     
     //var ballRadius = 20 ;
-    
+    var floorN = 10;
     var floors = [];
-    for(var i = 0; i< 5 ; i++){
+    for(var i = 0; i<floorN ; i++){
         floors[i]={x :0, y:0 , status : 0}
     }
-    for(var i = 0;i < 5;i++){
+    for(var i = 0;i <floorN;i++){
         floors[i].x= Math.floor( Math.random()*canvas.width + 1);
         floors[i].y= Math.floor( Math.random()*canvas.height + 1);
     }
@@ -63,6 +63,7 @@
     ////////////////////////////////////
     ////////////others/////////////////
     var dy = -2;
+    
     var floorWidth = 100;
     var floorHeight = 10;
     var rightPressed = false;
@@ -89,7 +90,7 @@
     }
     function picTouchFloor(){//先不考慮
         
-        for(var i=0; i<5 ; i++){
+        for(var i=0; i<floorN ; i++){
             var F = floors[i];
             if( y + picHeight >=F.y && y + picHeight < F.y + floorHeight && x+picWidth/2 >F.x && x + picWidth/2 < F.x + floorWidth){
             y+=dy ;
@@ -103,7 +104,7 @@
     }
     function sum(){
         var sum = 0;
-        for(var i = 0; i<5; i++){
+        for(var i = 0; i<floorN; i++){
             sum += floors[i].status;
         }
         return sum;
@@ -130,7 +131,7 @@
         x = floors[0].x + picWidth;
         y = floors[0].y- picHeight;
         //drawBall();
-        for( var i = 0; i< 5; i++){
+        for( var i = 0; i< floorN; i++){
             drawFloor(i);}
     }
     
@@ -138,7 +139,7 @@
         ctx.clearRect(0,0,canvas.width,canvas.height);
         drawScore();
         picTouchFloor();
-        for(var i = 0 ; i < 5; i++){
+        for(var i = 0 ; i < floorN; i++){
             if (floors[i].y > 0){
                 floors[i].y += dy ;
                 drawFloor(i);
