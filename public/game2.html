@@ -186,7 +186,7 @@
          //  drawBall();
        //}
        getScore();
-
+       advance();
         requestAnimationFrame(draw);
     }
     document.addEventListener("keydown",keyDownHandler,false);
@@ -215,7 +215,13 @@
             e.preventDefault();
         }
     }
-    
+    function advance(){
+        if (score>=20){
+            dy = -(2+ (score-20)/10);
+        }
+      
+       
+    }
     init();
     draw();
 
