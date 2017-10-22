@@ -53,6 +53,8 @@
     
     
    /////////////picture///////////////// 
+    var picWidth = 81.5;
+    var picHeight = 89.5;
     var x =200;
     var y = 200;
     var picStatus = 0 ; // 0 represents no movement and 1~3 represents movement 
@@ -61,11 +63,12 @@
     var img = new Image();
     //img.src = "img/pic1_1f.png";
     img.src = images[0].src;
-    img.onload = function(){ 
-        ctx.drawImage(img,x,y,img.width/4,img.height / 4); 
+    img.onload = function(){
+        picHeight = img.height / 4;
+        picWidth =img.width /4;   
+        ctx.drawImage(img,x,y,picWidth,picHeight); 
             }   
-    var picHeight = img.height / 4;
-    var picWidth =img.width /4;        
+          
     ////////////////////////////////////
     ////////////others/////////////////
     var dy = -2;
@@ -144,7 +147,7 @@
     
     function draw(){
         ctx.clearRect(0,0,canvas.width,canvas.height);
-        img.src = images[0].src;
+        img.onload();
         drawScore();
         picTouchFloor();
         for(var i = 0 ; i < floorN; i++){
@@ -172,7 +175,7 @@
             if(!sum()){
                 //img.src = "img/pic2_2f.png";
                 img.src = images[5].src;
-                img.onload;
+                img.onload();
             }else{if(picStatus%4 == 0){
                 //img.src = "img/pic2_2f.png"; 
                 img.src = images[5].src;
@@ -190,13 +193,13 @@
                 img.src = images[4].src;
                 picStatus = 0;
             }
-            img.onload;}
+            img.onload();}
             x -= dx_m; 
             }else if(rightPressed == true && x<canvas.width - picWidth){
             if(!sum()){
                 //img.src = "img/pic1_2f.png";
                 img.src = images[1].src;
-                img.onload;
+                img.onload();;
             }else{if(picStatus%4 == 0){
                 //img.src = "img/pic1_2f.png"; 
                 img.src = images[1].src;
@@ -214,13 +217,13 @@
                 img.src = images[0].src;
                 picStatus = 0;
             }
-            img.onload; }
+            img.onload();; }
           
             x += dx_m;
         }else{
             //img.src = "img/pic1_1f.png";
             img.src = images[0].src;
-            img.onload;
+            img.onload();
                 }
         if(downPressed == true ){
             if( sum()==0){

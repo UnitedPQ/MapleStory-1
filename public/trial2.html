@@ -30,6 +30,8 @@ preload(images);*/
         <script>
         var x= 200;
         var y = 200;
+        var picWidth = 81.5;
+        var picHeight = 89.5;  
         var canvas = document.getElementById("myCanvas");
         var ctx = canvas.getContext("2d");
         var img = new Image();
@@ -37,19 +39,42 @@ preload(images);*/
         var rightPressed = false;
         img.src = images[0].src;
         console.log(img.src);
-        img.onload = function(){ 
-        ctx.drawImage(img,x,y,img.width/4,img.height / 4); 
+        img.onload = function(){
+            picWidth = img.width/4;
+            picHeight = img.height/4;  
+        ctx.drawImage(img,x,y,picWidth,picHeight); 
             }
-        var picWidth = img.width/4;
-        var picHeight = img.height/4;
+
+        
         var picStatus = 0;
         var dx_m =2;   
+        var floorx = 200;
+        var floory = 200;
+        var floorWidth = 100;
+        var floorHeight = 10;
+        function drawFloor(i){
+            ctx.beginPath();
+            ctx.rect(floorx , floory, floorWidth,floorHeight);
+            ctx.fillStyle = "#0095DD";
+            ctx.fill();
+            ctx.closePath();
         
-
+    }
+    function init(){
+        
+        floorx = 200;
+        floory = 200;
+        x = floorx + floorWidth/2 - picWidth/2;
+        y = floory- picHeight;
+        //drawBall();
+        /*for( var i = 0; i< floorN; i++){
+            drawFloor(i);}*/
+        drawFloor();
+    }
         function draw(){
             ctx.clearRect(0,0,canvas.width,canvas.height);
             img.onload();
-
+            drawFloor();
 
             if(leftPressed == true && x>0 ){
             if(picStatus%4 == 0){
@@ -67,7 +92,7 @@ preload(images);*/
                 img.src = "img/pic2_1f.png"
                 picStatus = 0;
             }
-            img.onload;
+            img.onload();
             x -= dx_m; 
             }else if(rightPressed == true && x<canvas.width - picWidth){
             if(picStatus%4 == 0){
@@ -85,7 +110,7 @@ preload(images);*/
                 img.src = "img/pic1_1f.png"
                 picStatus = 0;
             }
-            img.onload;
+            img.onload();
             x += dx_m; }
           
             
@@ -133,7 +158,7 @@ preload(images);*/
             e.preventDefault();
         }*/
     }
-        
+        init();
         draw();
         
         </script>
