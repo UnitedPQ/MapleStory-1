@@ -44,8 +44,8 @@
     var floorN = 10;
     var floors = [];
     for(var i = 0; i<floorN ; i++){
-        floors[i]={x :0, y:0 , status : 0}
-    }
+        floors[i]={x :0, y:0 , status : 0 , feature : 0} //status represents whether character touch the floor
+    }                                                    //feature represents what kinds of floor it is 
     for(var i = 0;i <floorN;i++){
         floors[i].x= Math.floor( Math.random()*canvas.width + 1);
         floors[i].y= Math.floor( Math.random()*canvas.height + 1);
@@ -72,13 +72,13 @@
     ////////////////////////////////////
     ////////////others/////////////////
     var dy = -2;
-    
     var floorWidth = 100;
     var floorHeight = 10;
     var rightPressed = false;
     var leftPressed = false; 
     var downPressed = false;
     var score = 0;
+    var lives = 3;
     //////////////////////////////////
 
 
@@ -92,18 +92,29 @@
     function drawFloor(i){
             ctx.beginPath();
             ctx.rect(floors[i].x , floors[i].y , floorWidth,floorHeight);
-            ctx.fillStyle = "#0095DD";
+            if(floors[i].feature ==0){
+                ctx.fillStyle = "#0095DD";
+            }else{
+                ctx.fillStyle = "red";
+            }
+            
             ctx.fill();
             ctx.closePath();
         
     }
+    
     function picTouchFloor(){//先不考慮
         
         for(var i=0; i<floorN ; i++){
             var F = floors[i];
             if( y + picHeight >=F.y && y + picHeight < F.y + floorHeight && x+picWidth/2 >F.x && x + picWidth/2 < F.x + floorWidth){
             y+=dy ;
-            floors[i].status = 1;}
+            floors[i].status = 1;//character touch the floor
+            if(floors[i].feature == 1){
+                lives--;
+                floors[i].feature = 0;
+            }
+            }
             //else{y-=dy;} 
             else{
                 floors[i].status = 0;
@@ -130,6 +141,11 @@
         ctx.font = "16px Arial";
         ctx.fillStyle = "black";
         ctx.fillText("Score: "+score, 8, 20);
+}
+    function drawLives() {
+        ctx.font = "16px Arial";
+        ctx.fillStyle = "#0095DD";
+        ctx.fillText("Lives: "+lives, canvas.width-65, 20);
 }
     /*function preloadImg(Image){
         var img = new Image();
@@ -159,6 +175,7 @@
             ctx.clearRect(floors[i].x,floors[i].y,floors[i].x+floorWidth,floors[i].y+floorHeight);
             floors[i].x = Math.floor( Math.random()*canvas.width + 1);
             floors[i].y = canvas.height;
+            floors[i].feature = Math.round(Math.random()*0.7); //0 or 1 determine what kinds of floor it is
             drawFloor(i);
             picTouchFloor();
 
@@ -232,7 +249,7 @@
                }
                      
        } 
-       if ( y + picHeight >= canvas.height | y  <= 0){
+       if ( y + picHeight >= canvas.height | y  <= 0 | lives==0){
            alert("game over");
            document.location.reload();
        }//else{
@@ -240,6 +257,7 @@
        //}
        getScore();
        drawScore();
+       drawLives();
        advance();
        
        
@@ -248,6 +266,9 @@
     }
     document.addEventListener("keydown",keyDownHandler,false);
     document.addEventListener("keyup",keyUpHandler,false);
+    /*document.addEventListener("touchstart",handleStart,false);
+    document.addEventListener("touchmove",handleMove,false);
+    document.addEventListener("touchend",handleEnd,false);*/
     function keyDownHandler(e){
         if(e.keyCode ==39){
             rightPressed = true;
@@ -272,6 +293,15 @@
             e.preventDefault();
         }
     }
+    /*function handleStart(e){
+
+    }
+    function handleMove(e){
+        e.preventDefault();
+
+    }
+    function handleEnd(e){}
+    */
     function advance(){
         if (score>=20){
             dy =-( Math.pow(score,0.3));
