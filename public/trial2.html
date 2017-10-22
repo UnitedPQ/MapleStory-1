@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>嘗試</title>
+    <script>
+        var images = new Array(8);
+        for(var i = 0;i<images.length ;i++){
+            images[i]= new Image();
+            images[i].src="img/pic"+(1+Math.floor(i/4))+"_"+(1+i%4)+"f.png";
+            console.log(images[i]);
+        }
+      /*  function preload(imageArray, index) {
+        index = index || 0;
+        if (imageArray && imageArray.length > index) {
+            var img = new Image ();
+            img.onload = function() {
+                preload(imageArray, index + 1);
+            }
+            img.src = images[index].src;
+}}
+preload(images);*/
+
+    </script>
+</head>
+<body>
+        <canvas id="myCanvas" width="800" height="600"></canvas>
+        <script>
+        var x= 200;
+        var y = 200;
+        var canvas = document.getElementById("myCanvas");
+        var ctx = canvas.getContext("2d");
+        var img = new Image();
+        var leftPressed = false;
+        var rightPressed = false;
+        img.src = images[0].src;
+        console.log(img.src);
+        img.onload = function(){ 
+        ctx.drawImage(img,x,y,img.width/4,img.height / 4); 
+            }
+        var picWidth = img.width/4;
+        var picHeight = img.height/4;
+        var picStatus = 0;
+        var dx_m =2;   
+        
+
+        function draw(){
+            ctx.clearRect(0,0,canvas.width,canvas.height);
+            img.onload();
+
+
+            if(leftPressed == true && x>0 ){
+            if(picStatus%4 == 0){
+                img.src = "img/pic2_2f.png"; 
+                picStatus += 1;
+            }else if(picStatus%4 == 1){
+                setTimeout("",1000);
+                img.src = "img/pic2_3f.png";
+                picStatus += 1;
+            }else if(picStatus%4 == 2){
+                setTimeout("",1000);
+                img.src = "img/pic2_4f.png";
+                picStatus += 1;
+            }else{
+                img.src = "img/pic2_1f.png"
+                picStatus = 0;
+            }
+            img.onload;
+            x -= dx_m; 
+            }else if(rightPressed == true && x<canvas.width - picWidth){
+            if(picStatus%4 == 0){
+                img.src = "img/pic1_2f.png"; 
+                picStatus += 1;
+            }else if(picStatus%4 == 1){
+                setTimeout("",1000);
+                img.src = "img/pic1_3f.png";
+                picStatus += 1;
+            }else if(picStatus%4 == 2){
+                setTimeout("",1000);
+                img.src = "img/pic1_4f.png";
+                picStatus += 1;
+            }else{
+                img.src = "img/pic1_1f.png"
+                picStatus = 0;
+            }
+            img.onload;
+            x += dx_m; }
+          
+            
+        
+        /*if(downPressed == true ){
+            if( sum()==0){
+                   
+                   y += dy_p;
+               }
+                     
+       } */
+
+
+       requestAnimationFrame(draw);
+
+        }
+        
+        
+        
+        
+        
+        document.addEventListener("keydown",keyDownHandler,false);
+        document.addEventListener("keyup",keyUpHandler,false);
+    function keyDownHandler(e){
+        if(e.keyCode ==39){
+            rightPressed = true;
+        }
+        else if(e.keyCode ==37){
+            leftPressed = true;
+        }
+        /*else if(e.keyCode == 40 ){
+            downPressed = true;
+            e.preventDefault();
+        }*/
+    }
+    function keyUpHandler(e){
+        if(e.keyCode ==39){
+            rightPressed = false;
+        }
+        else if(e.keyCode ==37){
+            leftPressed = false;
+        }
+        /*else if(e.keyCode == 40 ){
+            downPressed = false;
+            e.preventDefault();
+        }*/
+    }
+        
+        draw();
+        
+        </script>
+</body>
+</html>
