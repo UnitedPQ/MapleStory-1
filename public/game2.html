@@ -17,6 +17,10 @@
             images[i].src="img/pic"+(1+Math.floor(i/4))+"_"+(1+i%4)+"f.png";
             console.log(images[i]);
         }
+        var images_f = new Array(1);
+        images_f[0] = new Image();
+        images_f[0].src = "img/f1f.png";   
+        console.log(images_f[0]); 
     
     
     
@@ -70,6 +74,17 @@
             }   
           
     ///////////////////////////////////
+    //////////feature floor/////////////
+    var img_f = new Image();
+    img_f.src = images_f[0].src;
+    img_f.onload = function(i){
+         //   img_f_Height = img_f.height/8;
+         //   img_f_Width = img_f.width/8;
+            ctx.drawImage(img_f,floors[i].x,floors[i].y,floorWidth,floorHeight); 
+        }
+
+
+    ///////////////////////////////////
     var t = 0;
     dt = 1;
     ////////////others/////////////////
@@ -101,13 +116,14 @@
                 ctx.closePath();
             }else{
                 //ctx.fillStyle = "red";
-                drawFeatureFloor(i);
+                //drawFeatureFloor(i);
+                img_f.onload(i);
             }
             
             
         
     }
-    function drawFeatureFloor(i){
+    /*function drawFeatureFloor(i){
         var img_f = new Image();
         var img_f_Height;
         var img_f_width;
@@ -118,7 +134,17 @@
             ctx.drawImage(img_f,floors[i].x,floors[i].y,img_f_width,img_f_Height); 
         }
 
-    }
+    }*/
+
+    /*function drawFeatureFloor(i){
+        img_f.src = images_f[0].src;
+        img_f.onload = function(){
+         //   img_f_Height = img_f.height/8;
+         //   img_f_Width = img_f.width/8;
+            ctx.drawImage(img_f,floors[i].x,floors[i].y,floorWidth,floorHeight); 
+        }
+
+    }*/
     
     function picTouchFloor(){//先不考慮
         
