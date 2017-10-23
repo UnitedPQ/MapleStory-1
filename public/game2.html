@@ -52,7 +52,7 @@
     }
     
     
-   /////////////picture///////////////// 
+   /////////////character's picture///////////////// 
     var picWidth = 81.5;
     var picHeight = 89.5;
     var x =200;
@@ -69,7 +69,9 @@
         ctx.drawImage(img,x,y,picWidth,picHeight); 
             }   
           
-    ////////////////////////////////////
+    ///////////////////////////////////
+    var t = 0;
+    dt = 1;
     ////////////others/////////////////
     var dy = -2;
     var floorWidth = 100;
@@ -90,17 +92,32 @@
         ctx.closePath();
     }*/
     function drawFloor(i){
-            ctx.beginPath();
-            ctx.rect(floors[i].x , floors[i].y , floorWidth,floorHeight);
+            
             if(floors[i].feature ==0){
+                ctx.beginPath();
+                ctx.rect(floors[i].x , floors[i].y , floorWidth,floorHeight);
                 ctx.fillStyle = "#0095DD";
+                ctx.fill();
+                ctx.closePath();
             }else{
-                ctx.fillStyle = "red";
+                //ctx.fillStyle = "red";
+                drawFeatureFloor(i);
             }
             
-            ctx.fill();
-            ctx.closePath();
+            
         
+    }
+    function drawFeatureFloor(i){
+        var img_f = new Image();
+        var img_f_Height;
+        var img_f_width;
+        img_f.src = "img/f1f.png";
+        img_f.onload = function(){
+            img_f_Height = img.height/4;
+            img_f_width = img.width/4;
+            ctx.drawImage(img_f,floors[i].x,floors[i].y,img_f_width,img_f_Height); 
+        }
+
     }
     
     function picTouchFloor(){//先不考慮
@@ -111,9 +128,17 @@
             y+=dy ;
             floors[i].status = 1;//character touch the floor
             if(floors[i].feature == 1){
+                t=0;
                 lives--;
-                floors[i].feature = 0;
-            }
+                floors[i].feature = 1.5;}
+             else if (floors[i].feature == 1.5){
+                    t+=dt;
+                    if(t==50){
+                        lives --;
+                        t=0;
+                    }
+                }                
+            
             }
             //else{y-=dy;} 
             else{
