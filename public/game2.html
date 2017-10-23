@@ -20,7 +20,11 @@
         var images_f = new Array(1);
         images_f[0] = new Image();
         images_f[0].src = "img/f1f.png";   
-        console.log(images_f[0]); 
+        console.log(images_f[0]);
+        var images_m = new Array(1);
+        images_m[0] = new  Image();
+        images_m[0].src = "img/red_mf.png"; 
+        console.log(images_m[0]);
     
     
     
@@ -48,7 +52,7 @@
     var floorN = 10;
     var floors = [];
     for(var i = 0; i<floorN ; i++){
-        floors[i]={x :0, y:0 , status : 0 , feature : 0} //status represents whether character touch the floor
+        floors[i]={x :0, y:0 , status : 0 , feature : 0 , medicine : 0} //status represents whether character touch the floor
     }                                                    //feature represents what kinds of floor it is 
     for(var i = 0;i <floorN;i++){
         floors[i].x= Math.floor( Math.random()*canvas.width + 1);
@@ -65,7 +69,6 @@
     var dx_m = 5 ; //pic's movemoent  
     var dy_p = 2;
     var img = new Image();
-    //img.src = "img/pic1_1f.png";
     img.src = images[0].src;
     img.onload = function(){
         picHeight = img.height / 4;
@@ -78,16 +81,40 @@
     var img_f = new Image();
     img_f.src = images_f[0].src;
     img_f.onload = function(i){
-         //   img_f_Height = img_f.height/8;
-         //   img_f_Width = img_f.width/8;
             ctx.drawImage(img_f,floors[i].x,floors[i].y,floorWidth,floorHeight); 
         }
 
 
     ///////////////////////////////////
-    var t = 0;
-    dt = 1;
+    //////////medicine/////////////////
+    
+    var img_m = new Image();
+    img_m.src = images_m[0].src;
+    var img_m_size = 30;
+    img_m.onload = function(i){
+        ctx.drawImage(img_m,floors[i].x,floors[i].y-img_m_size,img_m_size,img_m_size);
+    }
+    var Medicine = {
+        createNew: function(i){
+            var medicine = {};
+            medicine.status = 0;//status represents different medicines 
+            medicine.x = floors[i].x;
+            medicine.y = floors[i].y-img_m_size;
+            medicine.onload = function(i){
+                ctx.drawImage(img_m,floors[i].x,floors[i].y-img_m_size,img_m_size,img_m_size);
+            }
+               
+             
+            return medicine;           　　　　　　
+        　　　　}
+        　　};
+    var med = Medicine.createNew(0);
+    
+    ///////////////////////////////////
+   
     ////////////others/////////////////
+    var t = 0;
+    var dt = 1;
     var dy = -2;
     var floorWidth = 100;
     var floorHeight = 10;
@@ -115,40 +142,33 @@
                 ctx.fill();
                 ctx.closePath();
             }else{
-                //ctx.fillStyle = "red";
-                //drawFeatureFloor(i);
+
                 img_f.onload(i);
             }
             
             
         
     }
-    /*function drawFeatureFloor(i){
-        var img_f = new Image();
-        var img_f_Height;
-        var img_f_width;
-        img_f.src = "img/f1f.png";
-        img_f.onload = function(){
-            img_f_Height = img.height/4;
-            img_f_width = img.width/4;
-            ctx.drawImage(img_f,floors[i].x,floors[i].y,img_f_width,img_f_Height); 
-        }
+    //function 裡面 新增class裡面的資訊會有問題
+    function drawMedicine(i){
+       if(floors[i].medicine == 1 ){//
+           med.onload(i);                  // med.status means that medicine appears first or appears long time
+          // med.status = 1;g
+       }else{
+        ctx.clearRect(med.x,med.y,med.x+img_m_size,med.y+img_m_size);  
+        floors[i].medicine = 0;
+       }
 
-    }*/
+       
 
-    /*function drawFeatureFloor(i){
-        img_f.src = images_f[0].src;
-        img_f.onload = function(){
-         //   img_f_Height = img_f.height/8;
-         //   img_f_Width = img_f.width/8;
-            ctx.drawImage(img_f,floors[i].x,floors[i].y,floorWidth,floorHeight); 
-        }
 
-    }*/
+    }
+
     
     function picTouchFloor(){//先不考慮
         
         for(var i=0; i<floorN ; i++){
+            med = Medicine.createNew(i);
             var F = floors[i];
             if( y + picHeight >=F.y && y + picHeight < F.y + floorHeight && x+picWidth/2 >F.x && x + picWidth/2 < F.x + floorWidth){
             y+=dy ;
@@ -163,7 +183,12 @@
                         lives --;
                         t=0;
                     }
-                }                
+                } 
+            if(floors[i].medicine ==1 && x+picWidth/2>=med.x && x+picWidth/2<=med.x+img_m_size ){
+                ctx.clearRect(med.x,med.y,med.x+img_m_size,med.y+img_m_size); 
+                lives++;
+                floors[i].medicine = 0;
+            }               
             
             }
             //else{y-=dy;} 
@@ -221,14 +246,23 @@
             if (floors[i].y > 0){
                 floors[i].y += dy ;
                 drawFloor(i);
+                if(floors[i].medicine==1){
+                    drawMedicine(i);
+                }
         }
         else{
+            floors[i].medicine = 0;
+            drawMedicine(i);
             ctx.clearRect(floors[i].x,floors[i].y,floors[i].x+floorWidth,floors[i].y+floorHeight);
             floors[i].x = Math.floor( Math.random()*canvas.width + 1);
             floors[i].y = canvas.height;
             floors[i].feature = Math.round(Math.random()*0.7); //0 or 1 determine what kinds of floor it is
+            if(!floors[i].feature){floors[i].medicine = Math.round(Math.random()*0.65);}
             drawFloor(i);
             picTouchFloor();
+            drawMedicine(i);
+            
+            
 
             
             //y_f[i] = Math.floor( Math.random()*canvas.height + 1);
