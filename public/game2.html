@@ -52,7 +52,7 @@
     var floorN = 10;
     var floors = [];
     for(var i = 0; i<floorN ; i++){
-        floors[i]={x :0, y:0 , status : 0 , feature : 0 , medicine : 0} //status represents whether character touch the floor
+        floors[i]={x :0, y:0 , status : 0 , feature : 0 , medicine : 0 , medicine_x : 0} //status represents whether character touch the floor
     }                                                    //feature represents what kinds of floor it is 
     for(var i = 0;i <floorN;i++){
         floors[i].x= Math.floor( Math.random()*canvas.width + 1);
@@ -98,10 +98,10 @@
         createNew: function(i){
             var medicine = {};
             medicine.status = 0;//status represents different medicines 
-            medicine.x = floors[i].x;
+            medicine.x = floors[i].medicine_x;
             medicine.y = floors[i].y-img_m_size;
             medicine.onload = function(i){
-                ctx.drawImage(img_m,floors[i].x,floors[i].y-img_m_size,img_m_size,img_m_size);
+                ctx.drawImage(img_m,medicine.x,medicine.y ,img_m_size,img_m_size);
             }
                
              
@@ -152,6 +152,8 @@
     //function 裡面 新增class裡面的資訊會有問題
     function drawMedicine(i){
        if(floors[i].medicine == 1 ){//
+           med.x = floors[i].medicine_x;
+           med.y = floors[i].y - img_m_size;
            med.onload(i);                  // med.status means that medicine appears first or appears long time
           // med.status = 1;g
        }else{
@@ -184,7 +186,7 @@
                         t=0;
                     }
                 } 
-            if(floors[i].medicine ==1 && x+picWidth/2>=med.x && x+picWidth/2<=med.x+img_m_size ){
+            if(floors[i].medicine ==1 && x+picWidth/2>=med.x-10 && x+picWidth/2<=med.x+img_m_size+10 ){ //+-10 避免吃不到藥水的bug
                 ctx.clearRect(med.x,med.y,med.x+img_m_size,med.y+img_m_size); 
                 lives++;
                 floors[i].medicine = 0;
@@ -257,7 +259,12 @@
             floors[i].x = Math.floor( Math.random()*canvas.width + 1);
             floors[i].y = canvas.height;
             floors[i].feature = Math.round(Math.random()*0.7); //0 or 1 determine what kinds of floor it is
-            if(!floors[i].feature){floors[i].medicine = Math.round(Math.random()*0.65);}
+            if(!floors[i].feature){floors[i].medicine = Math.round(Math.random()*0.6);
+                if(floors[i].medicine){
+                    floors[i].medicine_x = floors[i].x  + Math.floor(Math.random()*(floorWidth- img_m_size) + 1 );
+                }
+                }
+
             drawFloor(i);
             picTouchFloor();
             drawMedicine(i);
