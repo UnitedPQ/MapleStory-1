@@ -26,10 +26,16 @@
         images_m[0].src = "img/red_mf.png"; 
         console.log(images_m[0]);
         
-        var images_cm = new Array(1);
+        /*var images_cm = new Array(1);
         images_cm[0] = new Image();
         images_cm[0].src = "img/cm_1.png";
-        console.log(images_cm[0]);
+        console.log(images_cm[0]);*/
+        var images_kabu = new Array(6);
+        for(var i = 0; i <images_kabu.length;i++){
+            images_kabu[i] = new Image();
+            images_kabu[i].src="img/kabu"+(1+Math.floor(i/3))+"_"+(1+i%3)+"f.png";
+            console.log(images_kabu[i]);
+        }
     
     
     </script>
@@ -55,8 +61,8 @@
     var floorN = 10;
     var floors = [];
     for(var i = 0; i<floorN ; i++){
-        floors[i]={x :0, y:0 , status : 0 , feature : 0 , medicine : 0 , medicine_x : 0 , monster : 0 , monster_x : 0 , monster_dir :0} //status represents whether character touch the floor
-    }                                                    //feature represents what kinds of floor it is 
+        floors[i]={x :0, y:0 , status : 0 , feature : 0 , medicine : 0 , medicine_x : 0 , monster : 0 , monster_x : 0 , monster_dir :0 , t_m : 0} //status represents whether character touch the floor
+    }                                                    //feature represents what kinds of floor it is   //t_m : 怪物移動更新圖片
     for(var i = 0;i <floorN;i++){
         floors[i].x= Math.floor( Math.random()*canvas.width + 1);
         floors[i].y= Math.floor( Math.random()*canvas.height + 1);
@@ -116,6 +122,8 @@
     
     /////////////cutr monster/////////////////
     var img_cm_size = 40;
+    var img_monster = new Image();
+    img_monster.src = images_kabu[0].src;
     var Monster = {
         createNew: function(i){
             var monster = {};
@@ -123,36 +131,64 @@
             monster.x = floors[i].meonster_x ;
             monster.y = floors[i].y-img_cm_size;
             monster.dir = 0 ;//dir = direction  0 represent left and 1 represent right
-            monster.src = images_cm[0].src;
+            //monster.src = images_kabu[0].src;
             monster.onload = function(i){
-                ctx.drawImage(images_cm[0],monster.x,monster.y,img_cm_size,img_cm_size);
+                ctx.drawImage(img_monster,monster.x,monster.y,img_cm_size,img_cm_size);
             }
             monster.move = function(i){
 
                 if(!floors[i].monster_dir){
-                    if(monster.x >= floors[i].x){
+                    img_monster.src = images_kabu[0].src;
+                    if(monster.x >= floors[i].x ){
+                        floors[i].t_m +=dt;
+                        console.log("floors["+i+"].t_m :"+floors[i].t_m);
                         monster.x -- ;
                         floors[i].monster_x = monster.x;
-                    }else{floors[i].monster_dir = 1;}
+                        if(floors[i].t_m>0 && floors[i].t_m<15){
+                            img_monster.src = images_kabu[1].src;}
+                            else if(floors[i].t_m > 15 && floors[i].t_m <30){
+                                img_monster.src =images_kabu[2].src;
+                            }
+                        else if(floors[i].t_m > 30 && floors[i].t_m< 45 ){
+                            img_monster.src = images_kabu[0].src;
+                            floors[i].t_m = 0;
+                        }
+                    }else{
+                          floors[i].monster_dir = 1;
+                          floors[i].t_m= 0;}
                     
                 }else{
+                    img_monster.src = images_kabu[3].src;
                     if(monster.x <= floors[i].x + floorWidth-img_cm_size){
+                    floors[i].t_m += dt;
                     monster.x ++;
                     floors[i].monster_x = monster.x;
-                }else{floors[i].monster_dir = 0;}
+                    if(floors[i].t_m>0 && floors[i].t_m<15){
+                        img_monster.src = images_kabu[4].src;}
+                        else if(floors[i].t_m > 15 && floors[i].t_m <30){
+                            img_monster.src =images_kabu[5].src;
+                        }
+                    else if(floors[i].t_m > 30 && floors[i].t_m< 45 ){
+                        img_monster.src = images_kabu[3].src
+                        floors[i].t_m = 0;
+                    }
+                }else{ 
+                    floors[i].monster_dir = 0;
+                    floors[i].t_m = 0;}
                 monster.onload(i);
                 
             }
+
             
             
         }
         return monster;
     }}
-    var cm = Monster.createNew(0);
-
+    //var cm = Monster.createNew(0);
+    var kabu = Monster.createNew(0);
    //////////////////////////////////////////
     ////////////others/////////////////
-    var t = 0;
+    var t_f = 0;//有刺的floor 判斷站在上面多久
     var dt = 1;
     var dy = -2;
     var floorWidth = 100;
@@ -203,10 +239,10 @@
     function drawMonster(i){
         if(floors[i].monster == 1){
             
-            cm.x = floors[i].monster_x;
-            cm.y = floors[i].y - img_cm_size;
-            cm.onload(i);
-            cm.move(i);      
+            kabu.x = floors[i].monster_x;
+            kabu.y = floors[i].y - img_cm_size;
+            kabu.onload(i);
+            kabu.move(i);      
         }else{
             
          //   ctx.clearRect(cm.x,cm.y,cm.x + img_cm_size,cm.y + img_cm_size);
@@ -223,14 +259,14 @@
             y+=dy ;
             floors[i].status = 1;//character touch the floor
             if(floors[i].feature == 1){
-                t=0;
+                t_f=0;
                 lives--;
                 floors[i].feature = 1.5;}
              else if (floors[i].feature == 1.5){
-                    t+=dt;
-                    if(t==50){
+                    t_f+=dt;
+                    if(t_f==50){
                         lives --;
-                        t=0;
+                        t_f=0;
                     }
                 } 
             if(floors[i].medicine ==1 && x+picWidth/2>=med.x-10 && x+picWidth/2<=med.x+img_m_size+10 ){ //+-10 避免吃不到藥水的bug
@@ -238,17 +274,24 @@
                 lives++;
                 floors[i].medicine = 0;
             }
-            if(floors[i].monster == 1 && x+picWidth/2>=cm.x && x+picWidth/2 <= cm.x + img_cm_size){
-                ctx.clearRect(cm.x,cm.y,cm.x+img_cm_size,cm.y+img_cm_size);
-                lives--;
+            if(floors[i].monster == 1 && x+picWidth/2>=kabu.x && x+picWidth/2 <= kabu.x + img_cm_size){
+                //ctx.clearRect(kabu.x,kabu.y,kabu.x+img_cm_size,kabu.y+img_cm_size);
                 if(!floors[i].monster_dir){
-                    x = x- img_cm_size;
-                    y = y- img_cm_size;
+                    x = x- 2*img_cm_size;
+                    y = y- 2*img_cm_size;
                 }else{
-                    x = x + img_cm_size;
-                    y = y- img_cm_size;
+                    x = x + 2*img_cm_size;
+                    y = y- 2*img_cm_size;
                 }
-                floors[i].monster = 0;
+                if(x  <kabu.x){
+                    floors[i].monster_x += img_cm_size;
+                }else{
+                    floors[i].monster_x -= img_cm_size;
+                }
+                
+                lives--;
+                
+                //floors[i].monster = 0;
             }               
             
             }
@@ -319,7 +362,7 @@
             floors[i].monster = 0;
             drawMedicine(i);
             ctx.clearRect(floors[i].x,floors[i].y,floors[i].x+floorWidth,floors[i].y+floorHeight);
-            ctx.clearRect(cm.x,cm.y,cm.x + img_cm_size,cm.y + img_cm_size);
+            ctx.clearRect(kabu.x,kabu.y,kabu.x + img_cm_size,kabu.y + img_cm_size);
             ctx.clearRect(med.x,med.y,med.x+img_m_size,med.y+img_m_size);  
             floors[i].x = Math.floor( Math.random()*canvas.width + 1);
             floors[i].y = canvas.height;
@@ -339,7 +382,7 @@
             picTouchFloor();
             drawMedicine(i);
             drawMonster(i);
-            setTimeout(drawMonster(i),500);
+            
             
 
             
